@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>手把手教你，gitlab-ci&amp;gitlab-runner,完成自动化部署，不会不要钱，会也不要钱。 - Rotten Code</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="Rotten Code"><meta name="msapplication-TileImage" content="http://thisforyou.cn:180/file/img/logo1.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Rotten Code"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta description="前言Gitlab-ci 可以简化的项目部署操作，讲究自动化部署。只需要动动手指，在你的终端敲下 1git commit -m &amp;amp;#x27;update&amp;amp;#x27;  即可更新仓库代码并且直接发布到线上去。 1、本机环境 Centos 7  Docker version 19.03.5  Gitlab-ce  –version lastest 最新  Nginx 版本不重要  Gitlab-runn"><meta property="og:type" content="blog"><meta property="og:title" content="Rotten Code"><meta property="og:url" content="https://memoryoverflow.github.io/"><meta property="og:site_name" content="Rotten Code"><meta property="og:description" content="前言Gitlab-ci 可以简化的项目部署操作，讲究自动化部署。只需要动动手指，在你的终端敲下 1git commit -m &amp;amp;#x27;update&amp;amp;#x27;  即可更新仓库代码并且直接发布到线上去。 1、本机环境 Centos 7  Docker version 19.03.5  Gitlab-ce  –version lastest 最新  Nginx 版本不重要  Gitlab-runn"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="http://thisforyou.cn:180/file/img/logo.png"><meta property="article:published_time" content="2020-02-28T20:17:00.000Z"><meta property="article:modified_time" content="2020-12-30T09:26:39.907Z"><meta property="article:author" content="永健"><meta property="article:tag" content="gitlab-ci"><meta property="article:tag" content="gitlab-runner"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="http://thisforyou.cn:180/file/img/logo.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://memoryoverflow.github.io/posts/86deff97/"},"headline":"Rotten Code","image":["http://thisforyou.cn:180/file/img/logo.png"],"datePublished":"2020-02-28T20:17:00.000Z","dateModified":"2020-12-30T09:26:39.907Z","author":{"@type":"Person","name":"永健"},"description":"前言Gitlab-ci 可以简化的项目部署操作，讲究自动化部署。只需要动动手指，在你的终端敲下 1git commit -m &amp;#x27;update&amp;#x27;  即可更新仓库代码并且直接发布到线上去。 1、本机环境 Centos 7  Docker version 19.03.5  Gitlab-ce  –version lastest 最新  Nginx 版本不重要  Gitlab-runn"}</script><link rel="canonical" href="https://memoryoverflow.github.io/posts/86deff97/"><link rel="icon" href="http://thisforyou.cn:180/file/img/logo1.png"><meta name="referrer" content="no-referrer-when-downgrade"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css?family=Ubuntu:400,600|Source+Code+Pro|Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Microsoft YaHei:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&amp;amp;subset=latin,latin-ext|Inconsolata|Itim|Lobster.css"><script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="/js/globalUtils.js"></script><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><!--!--><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.8/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css"><!--!--><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/pace/1.0.2/pace.min.js"></script><link rel="stylesheet" href="/live2d/waifu.css"><script type="text/javascript" async src="/live2d/autoload.js"></script><meta name="generator" content="Hexo 5.3.0"><link rel="alternate" href="/atom.xml" title="Rotten Code" type="application/atom+xml">
+</head><body class="is-3-column has-navbar-fixed-top"><nav class="navbar navbar-main is-fixed-top"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/">Rotten Code</a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a><a class="navbar-item" href="/album">Album</a><a class="navbar-item" href="/friend">Friend</a><a class="navbar-item" href="/music">Music</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Join Gitter" href="/"><i class="fab fa-gitter"></i></a><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/memoryoverflow.cn"><i class="fab fa-github"></i></a><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a><a class="navbar-item" id="night-nav" title="Night Mode" href="javascript:;"><i class="fas fa-moon" id="night-icon"></i></a></div></div></div></nav><script type="text/javascript" src="/js/theme-setting.js"></script><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><!--!--><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><i class="far fa-calendar-plus"> </i>2020-02-29  <span class="level-item"> 永健 </span><a class="commentCountImg" href="/posts/86deff97/#comment-container"><span class="display-none-class">21c5e28bb232b1ce9e54eaa6e75fae48</span><i class="far fa-comment-dots"></i> <span class="commentCount" id="21c5e28bb232b1ce9e54eaa6e75fae48">99+</span>  </a><span class="level-item"><i class="far fa-clock"> </i>20 分钟  <i class="fas fa-pencil-alt"> </i>3.0 k</span><span class="level-item" id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv">0</span>次访问</span></div><div class="pin-icon"><i class="fas fa-thumbtack"></i></div></div><h1 class="title is-3 is-size-4-mobile">手把手教你，gitlab-ci&amp;gitlab-runner,完成自动化部署，不会不要钱，会也不要钱。</h1><div class="content"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>Gitlab-ci 可以简化的项目部署操作，讲究自动化部署。只需要动动手指，在你的终端敲下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git commit -m &#x27;update&#x27; </span><br></pre></td></tr></table></figure>
+<p>即可更新仓库代码并且直接发布到线上去。</p>
+<h1 id="1、本机环境"><a href="#1、本机环境" class="headerlink" title="1、本机环境"></a>1、本机环境</h1><ol>
+<li><p>Centos 7</p>
+</li>
+<li><p>Docker version 19.03.5</p>
+</li>
+<li><p>Gitlab-ce  –version lastest 最新</p>
+</li>
+<li><p>Nginx 版本不重要</p>
+</li>
+<li><p>Gitlab-runner version 12.8</p>
+<p><img src="http://thisforyou.cn:180/file/articleContentImg/2020-02-28/gitci1.png" alt="gitci1"></p>
+</li>
+</ol>
+<p>除此之外：还需要在部署的服务上，处理好 免密码登陆。自动化部署，自然不需要手动操。做好免密登陆，就可以将打包的dist文件夹 scp 到服务器上的nginx 指定路径，就可以直接访问了。</p>
+<a id="more"></a>
+
+
+
+<h1 id="2、安装说明"><a href="#2、安装说明" class="headerlink" title="2、安装说明"></a>2、安装说明</h1><h3 id="2-1-nginx-配置"><a href="#2-1-nginx-配置" class="headerlink" title="2.1 nginx 配置"></a>2.1 nginx 配置</h3><p>nginx 安装过程也略过。vim nginx.conf,进行修改。</p>
+<p><img src="http://thisforyou.cn:180/file/articleContentImg/2020-02-28/gitlab12.png" alt="gitlab12"></p>
+<p>Nginx 配置路径,转发；然后 部署脚本 要将 打包好的dist 文件夹，复制到部署的服务器上<code>/opt/project/web/</code>此文件夹下。</p>
+<p><code>nginx -s reload</code></p>
+<h3 id="2-2-部署的服务器要做ssh-免密码登陆"><a href="#2-2-部署的服务器要做ssh-免密码登陆" class="headerlink" title="2.2 部署的服务器要做ssh 免密码登陆"></a>2.2 部署的服务器要做ssh 免密码登陆</h3><ol>
+<li><p>登陆 要将项目发布的服务器上。</p>
+</li>
+<li><p>跟目录下处理</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">s sh-keygen -t rsa</span><br><span class="line"><span class="meta">#</span><span class="bash"> 输入后一直回车 默认操作即可，不加密，不改变生成文件的位置</span></span><br></pre></td></tr></table></figure>
+<p><img src="http://thisforyou.cn:180/file/articleContentImg/2020-02-28/ssh2.png" alt=""></p>
+</li>
+<li><p>拷贝公钥到认证文件-命令：cat ~/.ssh/id_rsa.pub &gt;&gt; ~/.ssh/authorized_keys</p>
+<p><img src="http://thisforyou.cn:180/file/articleContentImg/2020-02-28/ssh3.png" alt="ssh3"></p>
+</li>
+<li><p>Ssh localhost 看看有没有成功</p>
+</li>
+<li><p>ssh-copy-id root@部署的服务器ip</p>
+<p>此处我是部署环境，和 gitlab-runner 环境在同一个服务器上。一般情况下是两台，在开发环境下有即可配置可以。</p>
+</li>
+</ol>
+<p>   scp 的时候 我写的是 122端口，这是我的端口，如果没有改过，默认是22 </p>
+   <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-copy-id root@thisforyou.cn </span><br></pre></td></tr></table></figure>
+<h2 id="2-3-在自己的gitlab仓库上创建一个仓库，例如本机测试的。"><a href="#2-3-在自己的gitlab仓库上创建一个仓库，例如本机测试的。" class="headerlink" title="2.3 在自己的gitlab仓库上创建一个仓库，例如本机测试的。"></a>2.3 在自己的gitlab仓库上创建一个仓库，例如本机测试的。</h2><p> <strong>仓库：</strong></p>
+<p><img src="http://thisforyou.cn:180/file/articleContentImg/2020-02-28//gitlab2.png" alt="gitlab2"></p>
+<p><strong>线下环境：</strong></p>
+<p><img src="/Users/yongjian/Downloads/gitlab3.png" alt="gitlab3"></p>
+<h2 id="2-3-环境安装"><a href="#2-3-环境安装" class="headerlink" title="2.3 环境安装"></a>2.3 环境安装</h2><p><strong>本文重点在于</strong> <strong>gitlab-runnner的集成自动化部署</strong>，所以docker的安装，gitlab的安装，nginx  的安装过程跳过。</p>
+<p>当你看到此文的时候，这些环境相信你也应该有了。主要是 gitlab-runner的配置问题。</p>
+<h3 id="2-21-基于Docker安装-gitlab-runner"><a href="#2-21-基于Docker安装-gitlab-runner" class="headerlink" title="2.21 基于Docker安装  gitlab-runner"></a>2.21 基于Docker安装  gitlab-runner</h3><p><strong>1、安装</strong></p>
+<p>目前我安装的时候是最新版本：</p>
+<p>版本选择，<a target="_blank" rel="noopener" href="https://hub.docker.com/r/gitlab/gitlab-runner">移步—&gt;</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull gitlab&#x2F;gitlab-runner</span><br></pre></td></tr></table></figure>
+<p>启动命令： 我这是一个脚本</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">path=/usr/local/software/docker/gitlab-runner</span><br><span class="line">docker stop gitlab-runner &amp;&amp; docker rm gitlab-runner</span><br><span class="line">docker run -d --name gitlab-runner \</span><br><span class="line"> --restart always \</span><br><span class="line"> -v /usr/local/software/docker/gitlab-runner/config/gitlab-runner:/etc/gitlab-runner \</span><br><span class="line"> 430012f3776d</span><br></pre></td></tr></table></figure>
+<ul>
+<li>-v:将配置文件挂载到宿主机上 </li>
+<li>430012f3776d: 镜像ID</li>
+</ul>
+<p>启动成功后，如果 <code>/usr/local/software/docker/gitlab-runner/config/gitlab-runner</code> 下没有 配置文件 <code>config.toml</code> 文件的话。</p>
+<p>先停掉  <code>docker stop gitlab-runner &amp;&amp; docker rm gitlab-runner</code> </p>
+<p>直接执行： <code>docker run -d gitlab-runner  430012f3776d</code></p>
+<p>然后将容器中的数据复制出来：<code>docker cp gitlab-runner /etc/gitlab-runner :/usr/local/software/docker/gitlab-runner/config</code></p>
+<p>再次 执行启动脚本。</p>
+<p>或者等会，到注册的那一步也会生成的。</p>
+<p><strong>2、先到仓库拿到Token</strong></p>
+<p><img src="http://thisforyou.cn:180/file/articleContentImg/2020-02-28//gitlab4.png" alt="gitlab4"></p>
+<p><strong>3、注册</strong></p>
+<p>进入容器：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it gitlab-runner bash</span><br></pre></td></tr></table></figure>
+<p>输入</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gitlab-runner register</span><br></pre></td></tr></table></figure>
+<p><img src="http://thisforyou.cn:180/file/articleContentImg/2020-02-28//gitlab5.png" alt="gitlab5"></p>
+<ul>
+<li><p>Please enter the gitlab-ci coordinator URL (e.g. <a target="_blank" rel="noopener" href="https://gitlab.com/">https://gitlab.com/</a>): 输入你的gi tlab访问地址，上一步有说到</p>
+</li>
+<li><p>Please enter the gitlab-ci token for this runner: 访问token,如何获取上一步有说到</p>
+</li>
+<li><p>Please enter the gitlab-ci description for this runner: 输入描述，自定义</p>
+</li>
+<li><p>Please enter the gitlab-ci tags for this runner (comma separated): tags,在后面写脚本的时候需要用到，请先写上，我此处分两个，是在写脚本的时候，也分来个 job 来执行，所以也对应两个。非必要的，gitlab仓库上可以设置，是不是要填写，tags标签上运行。是可以限制</p>
+</li>
+<li><p>Please enter the executor: docker+machine, custom, docker, virtualbox, ssh, docker-ssh+machine, kubernetes, docker-ssh, parallels, shell:</p>
+<p>这里比较重要，做java开发的，主要还是使用 ssh、shell、Docker多，至于其它那些个暂不提。</p>
+<p>此处构建的是，vue项目，vue项目所需的是 node 环境。因为这个 gitlab-runner是基于Docker安装的，是一个独立的容器，你的服务器上的 node , git 都是无法使用的，如果此时，选择的是 shell 或者 ssh,的话，后边写执行脚本的时候 <code>npm run build</code> 就会报 npm not found,因为我的gitlab-runner是Docker装的，所以没有集成，其它环境。所以此时我们选择一个执行环境 为 Docker ,可以很好的管理依赖，也可以自己做一个镜像，将所需依赖放一起。</p>
+<p><a target="_blank" rel="noopener" href="http://s0docs0gitlab0com.icopy.site/runner/executors/README.html">中文官网说明</a></p>
+</li>
+<li><p>Please enter the default Docker image (e.g. ruby:2.6):  选择了Docker 执行，那就需要写上 需要的docker 镜像，此处需要node环境，就直接填写：node 即可，也可以加上版本好。此处也可以通过，自己写一个Dockerfile，制作一个容器。将环境依赖都写上Dockerfile里。 </p>
+</li>
+</ul>
+<p><strong>4、此时是已经注册成功了，回到gitlab仓库看看</strong></p>
+<p><img src="http://thisforyou.cn:180/file/articleContentImg/2020-02-28//gitlab6.png" alt="gitlab6"></p>
+<p>已经成功了。这里点击进去可以修改一些属性操作</p>
+<p><strong>5、编写脚本</strong></p>
+<p>编写脚本要在项目的根目录下编写；</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 如果是第一次看这个文件，看不明白先不要紧，先看明白它的关系先</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> yml格式编写</span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># stages：通俗讲：就是将项目，从打包部署，分几个步骤，比如我这里就分两个步骤，一个 build,打包编译， deploy：部署</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># 如果有更多步骤就写上，比如 先 clean build test deploy ；如Java的项目： 先 mvn clean , mvn test ,mvn package</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> image: node <span class="comment"># 就是所依赖的环境 在 gitrunner-cli注册的时候，已经写了此处可以省略不写</span></span></span><br><span class="line">stages:</span><br><span class="line">    - build    </span><br><span class="line">    - deploy</span><br><span class="line">    </span><br><span class="line">before_script:</span><br><span class="line">  - &#x27;which ssh-agent || ( apt-get update -y &amp;&amp; apt-get install openssh-client -y )&#x27;</span><br><span class="line">  - eval $(ssh-agent -s)</span><br><span class="line">  - ssh-add &lt;(echo &quot;$SSH_KEY&quot;)</span><br><span class="line">  - mkdir -p ~/.ssh</span><br><span class="line">  - &#x27;[[ -f /.dockerenv ]] &amp;&amp; echo -e &quot;Host *\n\tStrictHostKeyChecking no\n\n&quot; &gt; ~/.ssh/config&#x27;</span><br><span class="line"></span><br><span class="line"><span class="meta">   #</span><span class="bash"> 第一步打包，</span> </span><br><span class="line">   build: # build:这个名称自定义</span><br><span class="line">     stage: buil  # 这一个stage：的值就是上面的 stages下的第一个 build</span><br><span class="line">     tags: # tag 在注册的时候，有提到过，分两步骤，第一个是 buil,所以这里也对应上，注册的时候是自定义的名称</span><br><span class="line">      - buil</span><br><span class="line">     script: # 这个就是 操作命令 或者写脚本路径</span><br><span class="line">      - npm install -g cnpm --registry=https://registry.npm.taobao.org # 切换cnpm 提升速度</span><br><span class="line">      - echo `pwd` # 我只是输出下观察写路径</span><br><span class="line">      - cnpm install  # 安装 nodemodus</span><br><span class="line">      - cnpm run build  # 打包生成 dist 文件夹</span><br><span class="line">   </span><br><span class="line"><span class="meta"> #</span><span class="bash"> 缓存，因为是容器执行，每次执行的时候都会重新打包，缓存起来就不需要安装一次</span>  </span><br><span class="line">cache:</span><br><span class="line">  paths:</span><br><span class="line">   - node_modules/</span><br><span class="line">   - dist/</span><br><span class="line">   </span><br><span class="line"><span class="meta">   #</span><span class="bash"> 第二个任务 就是 专业词语 job ,第一个是先 build ,这个跟上面的build一样名称自定义</span></span><br><span class="line">   deploy:</span><br><span class="line">     stage: deploy  # 这一个stage：的值就是上面的 stages下的第一个 deploy</span><br><span class="line">     tags:</span><br><span class="line">       - deploy # tag 在注册的时候，有提到过，分两步骤，第二个个是 deploy,所以这里也对应上，注册的时候是自定义的名称</span><br><span class="line">     script:</span><br><span class="line">      - pwd #  也输出下路径</span><br><span class="line">      - mv dist vue-ci # 修改文件夹名字，对应上nginx 配置的 路径名字，不然nginx 无法正确转发 </span><br><span class="line">      - scp -R 122 -r /dist/ root@thisforyou.cn:/opt/project  # 将打包好的文件上到发布项目的服务器中的。放到nginx能访问到的文件夹下</span><br><span class="line">      #  我写的是 122端口，这是我的端口，如果没有改过，默认是22  ,scp 不需要 写 `—R 122`</span><br></pre></td></tr></table></figure>
+<p>脚本写好了，就将此文件更新到gitlab的仓库上去吧，git push之后，就会执行此脚本文件了，然后进入浏览器查看过程有没有问题。</p>
+<p><strong>⚠️yaml语法检测：http://你的gitlab访问地址/账户/vue-ci/-/ci/lint</strong></p>
+<p>本文正确的语法</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">stages:</span><br><span class="line"> - build    </span><br><span class="line"> - deploy</span><br><span class="line"></span><br><span class="line">before_script:</span><br><span class="line">  - &#x27;which ssh-agent || ( apt-get update -y &amp;&amp; apt-get install openssh-client -y )&#x27;</span><br><span class="line">  - eval $(ssh-agent -s)</span><br><span class="line">  - ssh-add &lt;(echo &quot;$SSH_KEY&quot;)</span><br><span class="line">  - mkdir -p ~/.ssh</span><br><span class="line">  - &#x27;[[ -f /.dockerenv ]] &amp;&amp; echo -e &quot;Host *\n\tStrictHostKeyChecking no\n\n&quot; &gt; ~/.ssh/config&#x27;</span><br><span class="line">build:</span><br><span class="line"> stage: build </span><br><span class="line"> tags: </span><br><span class="line">  - buil</span><br><span class="line"> script:</span><br><span class="line">  - npm install -g cnpm --registry=https://registry.npm.taobao.org </span><br><span class="line">  - echo `pwd`</span><br><span class="line">  - cnpm install </span><br><span class="line">  - cnpm run build</span><br><span class="line">cache:</span><br><span class="line">  paths:</span><br><span class="line">   - node_modules/</span><br><span class="line">   - dist/</span><br><span class="line">deploy:</span><br><span class="line"> stage: deploy  </span><br><span class="line"> tags:</span><br><span class="line">   - deploy </span><br><span class="line"> script:</span><br><span class="line">  - pwd</span><br><span class="line">  - ls -l</span><br><span class="line">  - mv dist vue-ci </span><br><span class="line">  - scp -P 122 -r vue-ci root@thisforyou.cn:/opt/project/web</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>before_script:  就是在执行脚本或者命令前，先执行的操纵。比如需要预先处理，环境问题，此处是要咋dock er内配置好与服务器的免密登陆。</p>
+<ul>
+<li><p>-ssh-add &lt;(echo “$SSH_KEY”)： $SSH_KEY，这是一个变量，需要到gitlab-ci 页面里面设置。</p>
+<p><code>cat /root/.ssh/id_rsa</code> 查看密钥，记下来,填到下面去。</p>
+<p><img src="http://thisforyou.cn:180/file/articleContentImg/2020-02-28//gitlab16.png" alt="gitlab16"></p>
+</li>
+</ul>
+</li>
+</ul>
+<p>查看结果：</p>
+<p><img src="http://thisforyou.cn:180/file/articleContentImg/2020-02-28//gitlab10.png" alt="gitlab10"></p>
+<p><img src="http://thisforyou.cn:180/file/articleContentImg/2020-02-28//gitlab11.png" alt="gitlab11"></p>
+<p><strong>进入第一个job build:</strong></p>
+<p>这图片已经不是第一次build了，前面有好几次测试，因为脚本的错 tags:buil 写错了 buid, 注册的时候，想写的是 build 却写成了 buil 。 在途中，是第已经有了nodemoduls的缓存了。</p>
+<p>第一次build:</p>
+<p><img src="http://thisforyou.cn:180/file/articleContentImg/2020-02-28/02-28-24.jpg" alt=""></p>
+<p>第二次build,纠正脚本后。</p>
+<p><img src="http://thisforyou.cn:180/file/articleContentImg/2020-02-28/02.40.36.jpg" alt="长截图   2020-02-28 上午02.40.36"></p>
+<p>build成功了。</p>
+<p>第一个job,成功，现在看看第二个，deploy job</p>
+<p><img src="http://thisforyou.cn:180/file/articleContentImg/2020-02-28/103921.jpg" alt=""></p>
+<p><strong>看看服务器上看看</strong></p>
+<p>看已经有了：</p>
+<p><img src="http://thisforyou.cn:180/file/articleContentImg/2020-02-28/gitlab14.png" alt="gitlab14"></p>
+<p>先浏览器看看成功了没有： </p>
+<p><img src="http://thisforyou.cn:180/file/articleContentImg/2020-02-28//gitlab15.png" alt="gitlab15"></p>
+<p><img src="https://www.memoryoverflow.cn/file/articleContentImg/2019-10-16/1571216899999.gif" alt=""></p>
+<p>返回上一页看，步骤结果：</p>
+<p><img src="http://thisforyou.cn:180/file/articleContentImg/2020-02-28/gitlab13.png" alt="gitlab13"></p>
+<p>现在已经部署成功；</p>
+<p>先跑流程跑通再来看；配置文件参数详解：</p>
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th align="left">是否必须</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>script</td>
+<td align="left">必须</td>
+<td>定义由Runner执行的shell脚本或命令</td>
+</tr>
+<tr>
+<td>extends</td>
+<td align="left">非必须</td>
+<td>定义此作业将继承的配置条目</td>
+</tr>
+<tr>
+<td>image</td>
+<td align="left">非必须</td>
+<td>需要使用的docker镜像，请查阅该文档</td>
+</tr>
+<tr>
+<td>services</td>
+<td align="left">非必须</td>
+<td>定义所需的docker服务，请查阅该文档</td>
+</tr>
+<tr>
+<td>stage</td>
+<td align="left">非必须</td>
+<td>定义一个工作场景阶段，默认是test</td>
+</tr>
+<tr>
+<td>type</td>
+<td align="left">非必须</td>
+<td>stage的别名,不赞成使用</td>
+</tr>
+<tr>
+<td>variables</td>
+<td align="left">非必须</td>
+<td>在job级别上定义的变量</td>
+</tr>
+<tr>
+<td>only</td>
+<td align="left">非必须</td>
+<td><strong>就是上面所说的，任务 jobs下的配置，only: - master 这个配置的是在仓库的哪个分支上执行的。</strong></td>
+</tr>
+<tr>
+<td>except</td>
+<td align="left">非必须</td>
+<td>定义job所不适用的git分支</td>
+</tr>
+<tr>
+<td>tags</td>
+<td align="left">非必须</td>
+<td>定义job所适用的runner，tags为runner标签</td>
+</tr>
+<tr>
+<td>allow_failure</td>
+<td align="left">非必须</td>
+<td>允许任务失败，但是如果失败，将不会改变提交状态</td>
+</tr>
+<tr>
+<td>when</td>
+<td align="left">非必须</td>
+<td>定义了job什么时候执行，可以是on_success、on_failure、always和manual</td>
+</tr>
+<tr>
+<td>dependencies</td>
+<td align="left">非必须</td>
+<td>定义了该job依赖哪一个job，如果设置该项，可以通过artifacts设置</td>
+</tr>
+<tr>
+<td>artifacts</td>
+<td align="left">非必须</td>
+<td>工件，在依赖项之间传递的东西，类似cache，但原理与cache不同</td>
+</tr>
+<tr>
+<td>cache</td>
+<td align="left">非必须</td>
+<td>定义需要被缓存的文件、文件夹列表</td>
+</tr>
+<tr>
+<td>before_script</td>
+<td align="left">非必须</td>
+<td>覆盖在作业之前执行的脚本或命令</td>
+</tr>
+<tr>
+<td>after_script</td>
+<td align="left">非必须</td>
+<td>覆盖在作业之后执行的脚本或命令</td>
+</tr>
+<tr>
+<td>environment</td>
+<td align="left">非必须</td>
+<td>定义让job完成部署的环境名称</td>
+</tr>
+<tr>
+<td>coverage</td>
+<td align="left">非必须</td>
+<td>定义job设置代码覆盖率</td>
+</tr>
+<tr>
+<td>retry</td>
+<td align="left">非必须</td>
+<td>定义job失败后的自动重试次数</td>
+</tr>
+</tbody></table>
+<p>不同的项目需要不同的配置</p>
+<p><strong>Gitlab-ci</strong> 更多的功能，等你来深究～</p>
+<p><a target="_blank" rel="noopener" href="http://s0docs0gitlab0com.icopy.site/runner/executors/README.html">中文官网说明</a></p>
+</div><div class="article-licensing box"><div class="licensing-title"><p>手把手教你，gitlab-ci&amp;gitlab-runner,完成自动化部署，不会不要钱，会也不要钱。</p><p><a href="https://memoryoverflow.github.io/posts/86deff97/">https://memoryoverflow.github.io/posts/86deff97/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><a href="https://memoryoverflow.github.io"><p>永健</p></a></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2020-02-29</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2020-12-30</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a class="icon" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a><a class="icon" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="recommend-area"></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/css/share.min.css"><div class="social-share"></div><script src="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="https://raw.githubusercontent.com/removeif/blog_image/master/img/2019/20190802135456.png" alt="支付宝"></span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="https://raw.githubusercontent.com/removeif/blog_image/master/img/2019/20190802135550.png" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/posts/92011cd1/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">接口不能被实例化，Mybatis的Mapper/Dao为什么却可以@Autowired注入？</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/posts/62ed19e0/"><span class="level-item">ConcurrentHashMap源码过程执行过程分析</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><!--!--><div class="card"><div class="card-content"><div class="title is-5">评论</div><div id="comment-container"></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/gitalk/1.6.0/gitalk.css"><script> $.getScript('/js/gitalk.min.js', function () { 
+            var gitalk = new Gitalk({
+            language:'zh-CN',
+            id: '21c5e28bb232b1ce9e54eaa6e75fae48',
+            repo: 'hexo.gitalk',
+            owner: 'memoryoverflow',
+            clientID: '2a4582eb0763faf94f24',
+            clientSecret: '9d6548a0296caf74d86adb367b19ab10bfcd7a7a',
+            admin: ["memoryoverflow"],
+            createIssueManually: true,
+            distractionFreeMode: false,
+            perPage: 10,
+            pagerDirection: 'last',
+            
+            
+            enableHotKey: true,
+            isLocked: false
+        })
+        gitalk.render('comment-container')});</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="is-flex is-mobile" href="#前言"><span>前言</span></a></li><li><a class="is-flex is-mobile" href="#1、本机环境"><span>1、本机环境</span></a></li><li><a class="is-flex is-mobile" href="#2、安装说明"><span>2、安装说明</span></a><ul class="menu-list"><ul class="menu-list"><li><a class="is-flex is-mobile" href="#2-1-nginx-配置"><span>2.1 nginx 配置</span></a></li><li><a class="is-flex is-mobile" href="#2-2-部署的服务器要做ssh-免密码登陆"><span>2.2 部署的服务器要做ssh 免密码登陆</span></a></li></ul><li><a class="is-flex is-mobile" href="#2-3-在自己的gitlab仓库上创建一个仓库，例如本机测试的。"><span>2.3 在自己的gitlab仓库上创建一个仓库，例如本机测试的。</span></a></li><li><a class="is-flex is-mobile" href="#2-3-环境安装"><span>2.3 环境安装</span></a><ul class="menu-list"><li><a class="is-flex is-mobile" href="#2-21-基于Docker安装-gitlab-runner"><span>2.21 基于Docker安装  gitlab-runner</span></a></li></ul></li></ul></li></ul></div></div><style>.menu-list > li > a.is-active + .menu-list { display: block; }.menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar is-rounded" src="http://thisforyou.cn:180/file/img/logo.png" alt="Rotten Code"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">Rotten Code</p><p class="is-size-6 is-block">写得一手好代码！👍</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>Guangzhou City, Guangdong Province</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">22</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">19</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">26</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="/" target="_blank" rel="noopener">关注我</a></div><div class="level is-mobile"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/memoryoverflow"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Weibo" href="/"><i class="fab fa-weibo"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Email" href="mailto:memoryoverflows@163.com"><i class="fa fa-envelope"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Next" href="http://thisforyou.cn:180/"><i class="fab fa-dribbble"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="RSS" href="/atom.xml"><i class="fas fa-rss"></i></a></div><div><hr><p id="hitokoto">:D 一言句子获取中...</p><script type="text/javascript" defer>function getYiyan(){
+                                $.getJSON("https://v1.hitokoto.cn/", function (data) {
+                                if(data){
+                                    $('#hitokoto').html("");
+                                    $('#hitokoto').append("<strong style='color: #3273dc;'>"+data.hitokoto+"</strong>"+
+                                    "<p>"+"来源《"+data.from+"》</p><p>提供者-"+data.creator+"</p>");
+                                }});}
+                                $(function (){getYiyan();$('#hitokoto').click(function(){getYiyan();})});</script></div></div></div><div class="card widget" data-type="links"><div class="card-content"><div class="menu"><h3 class="menu-label">链接</h3><ul class="menu-list"><li><a class="level is-mobile" href="https://hexo.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Hexo</span></span><span class="level-right"><span class="level-item tag">hexo.io</span></span></a></li><li><a class="level is-mobile" href="https://bulma.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Bulma</span></span><span class="level-right"><span class="level-item tag">bulma.io</span></span></a></li></ul></div></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新评论</h3><span class="body_hot_comment">加载中，最新评论有1分钟缓存...</span></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><figure class="media-left"><a class="image" href="/posts/434af8d5/"><img src="https://cdn.jsdelivr.net/gh/removeif/blog_image/img/2020/20200121101729.png" alt="项目生成工具,根据数据库生成，助你效率翻倍"></a></figure><div class="media-content"><p class="date"><time dateTime="2020-05-26T13:41:00.000Z">2020-05-26</time></p><p class="title"><a href="/posts/434af8d5/">项目生成工具,根据数据库生成，助你效率翻倍</a></p><p class="categories"><a href="/categories/java/">java</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-04-12T02:23:00.000Z">2020-04-12</time></p><p class="title"><a href="/posts/e4924e28/">github 克隆速度慢？怎么解决，三步，速度达到 Mib/s</a></p><p class="categories"><a href="/categories/java/">java</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-03-29T08:06:00.000Z">2020-03-29</time></p><p class="title"><a href="/posts/f10cb61a/">在安卓里没有Spring?不存在的，咱们自己手写实现 IOC 与 DI，在安卓里也不再自己new像</a></p><p class="categories"><a href="/categories/java/">java</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-03-08T10:21:00.000Z">2020-03-08</time></p><p class="title"><a href="/posts/7c99dfb8/">MyBatis -- Invalid bound statement (not found) 的所以然来，知其然知其所以然！</a></p><p class="categories"><a href="/categories/java/">java</a> / <a href="/categories/java/mybatis/">mybatis</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-03-07T13:19:00.000Z">2020-03-07</time></p><p class="title"><a href="/posts/7ac91ac6/">CountDownLatch底层实现构成，一步步分析</a></p><p class="categories"><a href="/categories/java/">java</a></p></div></article></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">分类</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/categories/Docker/"><span class="level-start"><span class="level-item">Docker</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/Nexus/"><span class="level-start"><span class="level-item">Nexus</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/java/"><span class="level-start"><span class="level-item">java</span></span><span class="level-end"><span class="level-item tag">13</span></span></a><ul class="mr-0"><li><a class="level is-mobile is-marginless" href="/categories/java/docker/"><span class="level-start"><span class="level-item">docker</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/java/linux/"><span class="level-start"><span class="level-item">linux</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/java/mybatis/"><span class="level-start"><span class="level-item">mybatis</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/java/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"><span class="level-start"><span class="level-item">并发编程</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li></ul></li><li><a class="level is-mobile is-marginless" href="/categories/linux/"><span class="level-start"><span class="level-item">linux</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/mybatis/"><span class="level-start"><span class="level-item">mybatis</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/mysql/"><span class="level-start"><span class="level-item">mysql</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><a class="level is-mobile is-marginless" href="/categories/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/archives/2020/05/"><span class="level-start"><span class="level-item">五月 2020</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2020/04/"><span class="level-start"><span class="level-item">四月 2020</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2020/03/"><span class="level-start"><span class="level-item">三月 2020</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2020/02/"><span class="level-start"><span class="level-item">二月 2020</span></span><span class="level-end"><span class="level-item tag">7</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2020/01/"><span class="level-start"><span class="level-item">一月 2020</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><a class="level is-mobile is-marginless" href="/archives/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">标签</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/java/"><span class="tag">java</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/linux/"><span class="tag">linux</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/mybatis/"><span class="tag">mybatis</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"><span class="tag">并发编程</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%8F%8D%E5%B0%84/"><span class="tag">反射</span><span class="tag is-grey-lightest">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/ConcurrentHashMap/"><span class="tag">ConcurrentHashMap</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/IOC-Spring/"><span class="tag">IOC Spring</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Nexus/"><span class="tag">Nexus</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/SpringBoot/"><span class="tag">SpringBoot</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/SpringBoot-starter/"><span class="tag">SpringBoot starter</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/centos/"><span class="tag">centos</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/github/"><span class="tag">github</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/gitlab-ci/"><span class="tag">gitlab-ci</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/gitlab-runner/"><span class="tag">gitlab-runner</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/http%E5%8D%8F%E8%AE%AE/"><span class="tag">http协议</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/lock/"><span class="tag">lock</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/maven/"><span class="tag">maven</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/mysql/"><span class="tag">mysql</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/nextcloud/"><span class="tag">nextcloud</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/shell/"><span class="tag">shell</span><span class="tag is-grey-lightest">1</span></a></div></div><div class="field is-grouped is-grouped-multiline"><a class="tags has-addons" href="/tags/"><span class="tag">查看全部&gt;&gt;</span></a></div></div></div></div><div class="card widget" data-type="subscribe-email"><div class="card-content"><div class="menu"><h3 class="menu-label">订阅更新</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button" type="submit" value="订阅"></div></div></form></div></div></div><!--!--><div class="column-right-shadow is-hidden-widescreen"></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/">Rotten Code</a><p class="size-small"><span>&copy; 2020 永健</span>  Powered by <a href="https://hexo.io/" target="_blank">Hexo</a><br><span>© <a href="http://www.beian.miit.gov.cn/" target="_blank">川ICP备88888888号-8（测试）</a><br></span><span>© 版权说明：[本网站所有内容均收集于互联网或自己创作,<br />&nbsp;&nbsp;&nbsp;&nbsp;方便于网友与自己学习交流，如有侵权，请联系我，立即处理]<br /></span><span><span id="statistic-times">loading...</span><script>function createTime(time) {
+            var n = new Date(time);
+            now.setTime(now.getTime() + 250),
+                days = (now - n) / 1e3 / 60 / 60 / 24,
+                dnum = Math.floor(days),
+                hours = (now - n) / 1e3 / 60 / 60 - 24 * dnum,
+                hnum = Math.floor(hours),
+            1 == String(hnum).length && (hnum = "0" + hnum),
+                minutes = (now - n) / 1e3 / 60 - 1440 * dnum - 60 * hnum,
+                mnum = Math.floor(minutes),
+            1 == String(mnum).length && (mnum = "0" + mnum),
+                seconds = (now - n) / 1e3 - 86400 * dnum - 3600 * hnum - 60 * mnum,
+                snum = Math.round(seconds),
+            1 == String(snum).length && (snum = "0" + snum),
+                document.getElementById("statistic-times").innerHTML = "❤️本站自 <strong>"+time.split(" ")[0].replace(/\//g,".")+"</strong> 已运行 <strong>" + dnum + "</strong> 天 <strong>" + hnum + "</strong> 小时 <strong>" + mnum + "</strong> 分 <strong>" + snum + "</strong> 秒！❤️";
+        }var now = new Date();setInterval("createTime('2020/12/30 00:00:00')", 250,"");</script><br></span><div class="size-small"><span>❤️感谢 <strong><span id="busuanzi_value_site_uv">99+</span></strong> 小伙伴的 <strong><span id="busuanzi_value_site_pv">99+</span></strong> 次光临！❤️</span></div></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="/"><i class="fab fa-github"></i></a></p></div><div class="sideMusic"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="/js/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script><meting-js style="width: auto;height: 2000px;" server="netease" type="playlist" id="438723690" theme="#2980b9" loop="all" autoplay="false" order="list" storageName="aplayer-setting" lrctype="0" list-max-height="400px" fixed="true"></meting-js></div></div></div></div></footer><script src="https://cdnjs.loli.net/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script><script src="https://cdnjs.loli.net/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" async></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.8/js/lightgallery.min.js" defer></script><script src="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><script type="text/x-mathjax-config">MathJax.Hub.Config({
+            'HTML-CSS': {
+                matchFontHeight: false
+            },
+            SVG: {
+                matchFontHeight: false
+            },
+            CommonHTML: {
+                matchFontHeight: false
+            },
+            tex2jax: {
+                inlineMath: [
+                    ['$','$'],
+                    ['\\(','\\)']
+                ]
+            }
+        });</script><script src="https://cdnjs.loli.net/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" defer></script><!--!--><script src="/js/main.js" defer></script><script>$.getScript('/js/comment-issue-data.js',function(){loadIssueData('2a4582eb0763faf94f24','9d6548a0296caf74d86adb367b19ab10bfcd7a7a','memoryoverflow','hexo.gitalk',false);})</script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script><script type="text/javascript">var pjax = new Pjax({
+            elements: "a",//代表点击链接就更新
+            selectors: [  //代表要更新的节点
+                ".section",
+                "title"
+            ],
+            cache: true,
+            cacheBust:false
+        })
+
+        function loadBusuanzi(){
+        $.getScript("//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js", function () {});
+        }
+
+        // 开始 PJAX 执行的函数
+        document.addEventListener('pjax:send', function () {
+        });
+        
+        // PJAX 完成之后执行的函数，可以和上面的重载放在一起
+        document.addEventListener('pjax:complete', function () {
+            $(".section").css({opacity:1});
+            if(true){
+                $.getScript('/js/comment-issue-data.js',function(){loadIssueData('2a4582eb0763faf94f24','9d6548a0296caf74d86adb367b19ab10bfcd7a7a','memoryoverflow','hexo.gitalk',false);});
+            }
+            if(false){
+                loadMathJax();
+            }
+            loadMainJs(jQuery, window.moment, window.ClipboardJS, window.IcarusThemeSettings);
+            loadBackTop();
+            loadBusuanzi();
+            if(typeof loadBanner == 'function'){
+                loadBanner();
+            }
+        });</script></body></html>
