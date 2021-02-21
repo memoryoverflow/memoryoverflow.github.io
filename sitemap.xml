@@ -177,14 +177,14 @@
   </url>
   
   <url>
-    <loc>http://blog.memoryoverflow.cn/self-talking/index.html</loc>
+    <loc>http://blog.memoryoverflow.cn/music/index.html</loc>
     
     <lastmod>2020-12-30</lastmod>
     
   </url>
   
   <url>
-    <loc>http://blog.memoryoverflow.cn/music/index.html</loc>
+    <loc>http://blog.memoryoverflow.cn/self-talking/index.html</loc>
     
     <lastmod>2020-12-30</lastmod>
     
@@ -242,20 +242,6 @@
   </url>
   
   <url>
-    <loc>http://blog.memoryoverflow.cn/tags/SpringBoot/</loc>
-    <lastmod>2021-02-21</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://blog.memoryoverflow.cn/tags/linux/</loc>
-    <lastmod>2021-02-21</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>http://blog.memoryoverflow.cn/tags/%E9%94%81/</loc>
     <lastmod>2021-02-21</lastmod>
     <changefreq>daily</changefreq>
@@ -264,6 +250,20 @@
   
   <url>
     <loc>http://blog.memoryoverflow.cn/tags/lock/</loc>
+    <lastmod>2021-02-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.memoryoverflow.cn/tags/SpringBoot/</loc>
+    <lastmod>2021-02-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.memoryoverflow.cn/tags/linux/</loc>
     <lastmod>2021-02-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -312,6 +312,20 @@
   </url>
   
   <url>
+    <loc>http://blog.memoryoverflow.cn/tags/SpringBoot-starter/</loc>
+    <lastmod>2021-02-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.memoryoverflow.cn/tags/mysql/</loc>
+    <lastmod>2021-02-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://blog.memoryoverflow.cn/tags/%E7%A7%81%E6%9C%89%E4%BA%91%E7%9B%98/</loc>
     <lastmod>2021-02-21</lastmod>
     <changefreq>daily</changefreq>
@@ -326,13 +340,6 @@
   </url>
   
   <url>
-    <loc>http://blog.memoryoverflow.cn/tags/mysql/</loc>
-    <lastmod>2021-02-21</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>http://blog.memoryoverflow.cn/tags/Nexus/</loc>
     <lastmod>2021-02-21</lastmod>
     <changefreq>daily</changefreq>
@@ -341,13 +348,6 @@
   
   <url>
     <loc>http://blog.memoryoverflow.cn/tags/maven/</loc>
-    <lastmod>2021-02-21</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://blog.memoryoverflow.cn/tags/SpringBoot-starter/</loc>
     <lastmod>2021-02-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -412,14 +412,14 @@
   </url>
   
   <url>
-    <loc>http://blog.memoryoverflow.cn/categories/Docker/</loc>
+    <loc>http://blog.memoryoverflow.cn/categories/%E9%94%81/</loc>
     <lastmod>2021-02-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>http://blog.memoryoverflow.cn/categories/%E9%94%81/</loc>
+    <loc>http://blog.memoryoverflow.cn/categories/Docker/</loc>
     <lastmod>2021-02-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -433,6 +433,13 @@
   </url>
   
   <url>
+    <loc>http://blog.memoryoverflow.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/</loc>
+    <lastmod>2021-02-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://blog.memoryoverflow.cn/categories/java/mybatis/</loc>
     <lastmod>2021-02-21</lastmod>
     <changefreq>daily</changefreq>
@@ -440,7 +447,7 @@
   </url>
   
   <url>
-    <loc>http://blog.memoryoverflow.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/</loc>
+    <loc>http://blog.memoryoverflow.cn/categories/%E9%94%81/java/</loc>
     <lastmod>2021-02-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -454,13 +461,6 @@
   </url>
   
   <url>
-    <loc>http://blog.memoryoverflow.cn/categories/java/docker/</loc>
-    <lastmod>2021-02-21</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>http://blog.memoryoverflow.cn/categories/mysql/</loc>
     <lastmod>2021-02-21</lastmod>
     <changefreq>daily</changefreq>
@@ -468,7 +468,7 @@
   </url>
   
   <url>
-    <loc>http://blog.memoryoverflow.cn/categories/%E9%94%81/java/</loc>
+    <loc>http://blog.memoryoverflow.cn/categories/java/docker/</loc>
     <lastmod>2021-02-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -496,14 +496,14 @@
   </url>
   
   <url>
-    <loc>http://blog.memoryoverflow.cn/categories/java/linux/</loc>
+    <loc>http://blog.memoryoverflow.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/mybatis/</loc>
     <lastmod>2021-02-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>http://blog.memoryoverflow.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/mybatis/</loc>
+    <loc>http://blog.memoryoverflow.cn/categories/java/linux/</loc>
     <lastmod>2021-02-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
